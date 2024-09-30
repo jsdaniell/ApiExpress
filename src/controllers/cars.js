@@ -1,4 +1,5 @@
 import { cars } from "../db/db.js";
+import CarsRepository from "../repositories/carsRepository.js";
 
 const CarsController = {
     getCars: (req, res) => {
@@ -11,12 +12,13 @@ const CarsController = {
             return res.status(400).json({ message: 'All fields are required' });
         }
     
-        cars.push({
-            ...newCar,
-            id: cars.length + 1,
-        });
+        try {
+            CarsRepository.addCar(newCar);
+        } catch (error) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
     
-        res.json(newCar);
+        res.status(201).json(newCar);
     },
     deleteCar: (req, res) => {
         const { id } = req.params;
