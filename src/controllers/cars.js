@@ -2,10 +2,12 @@ import { cars } from "../db/db.js";
 import CarsRepository from "../repositories/carsRepository.js";
 
 const CarsController = {
-    getCars: (req, res) => {
+    getCars: async (req, res) => {
+        const cars = await CarsRepository.getCars()
+
         res.json(cars);
     },
-    newCar: (req, res) => {
+    newCar: async (req, res) => {
         const newCar = req.body;
     
         if(!newCar.brand || !newCar.model || !newCar.cilinders) {
@@ -13,7 +15,9 @@ const CarsController = {
         }
     
         try {
-            CarsRepository.addCar(newCar);
+            const result = await CarsRepository.addCar(newCar);
+
+            return res.status(201).json(result);
         } catch (error) {
             return res.status(500).json({ message: 'Internal server error' });
         }
